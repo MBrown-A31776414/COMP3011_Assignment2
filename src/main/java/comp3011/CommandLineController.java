@@ -24,17 +24,38 @@ import java.util.List;
  * </p>
  */
 public class CommandLineController {
-    private final String[] args;
+    
+	// list of input arguments
+	private final String[] args;
 
+    // 
     private boolean helpRequested;
     private boolean audioRequested;
     private boolean maximiseRequested;
+    
+    // details of the
     private Integer displayId;
     private File videoFile;
     private String errorMessage;
-
+    
+    // Specification 1 setting on or off
+    private boolean numberFrames;
+    private boolean scratchFrames;
+    private boolean flickerFrames;
+    private boolean blackAndWhite;
+    private boolean yellowFrames;
+    private boolean vignetteFrames;
+    private boolean dustFrames;
+    private boolean jitterFrames;
+    private boolean mottleFrames;
+    private boolean bleedFrames;
+    private boolean pepperFrames;
+    
+    // On creation parse the argument or 
     public CommandLineController(String[] args) {
+    	// Clone input arguments to class variable and parse the arguments
         this.args = args.clone();
+        
         parse();
         if (errorMessage != null) {
             System.out.println(errorMessage);
@@ -44,6 +65,7 @@ public class CommandLineController {
         }
     }
 
+    // 
     public File getVideoFile() {
         return videoFile;
     }
@@ -71,6 +93,43 @@ public class CommandLineController {
     public boolean shouldLaunchApplication() {
         return errorMessage == null && videoFile != null;
     }
+    
+    /**
+     * Specification 1; frame processors
+     */
+    public boolean getNumberFrames() {
+    	return numberFrames;
+    }
+    public boolean getScratchFrames() {
+    	return scratchFrames;
+    }
+    public boolean getFlickerFrames() {
+    	return flickerFrames;
+    }
+    public boolean getBlackAndWhiteFrames() {
+    	return blackAndWhite;
+    }
+    public boolean getYellowFrames() {
+    	return yellowFrames;
+    }
+    public boolean getVignetteFrames() {
+    	return vignetteFrames;
+    }
+    public boolean getDustFrames() {
+    	return dustFrames;
+    }
+    public boolean getJitterFrames() {
+    	return jitterFrames;
+    }
+    public boolean getMottleFrames() {
+    	return mottleFrames;
+    }
+    public boolean getBleedFrames() {
+    	return bleedFrames;
+    }
+    public boolean getPepperFrames() {
+    	return pepperFrames;
+    }
 
     private void parse() {
         List<String> videoFiles = new ArrayList<>();
@@ -85,6 +144,29 @@ public class CommandLineController {
                 setDisplayId(1);
             } else if ("-2".equals(arg) || "--monitor-2".equals(arg)) {
                 setDisplayId(2);
+            // specification 1 arguments, should they be implemented or not
+            } else if ("-n".equals(arg) || "--number-frames".equals(arg)) {
+                numberFrames = true;
+            } else if ("-s".equals(arg) || "--scratch-frames".equals(arg)) {
+                scratchFrames = true;
+            } else if ("-f".equals(arg) || "--flicker-frame".equals(arg)) {
+                flickerFrames = true;
+            } else if ("-w".equals(arg) || "--black-and-white".equals(arg)) {
+                blackAndWhite = true;
+            } else if ("-y".equals(arg) || "--yellow-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-v".equals(arg) || "--vignette-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-d".equals(arg) || "--dust-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-j".equals(arg) || "--jitter-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-m".equals(arg) || "--mottle-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-b".equals(arg) || "--bleed-frames".equals(arg)) {
+            	yellowFrames = true;
+            } else if ("-p".equals(arg) || "--pepper-frames".equals(arg)) {
+            	yellowFrames = true;
             } else if (arg.startsWith("-")) {
                 errorMessage = "Unknown option: " + arg;
             } else {
@@ -115,6 +197,7 @@ public class CommandLineController {
         this.displayId = displayId;
     }
 
+    // Help message to print to console
     private void printHelp() {
         System.out.println("Usage: VideoPlayer [options] [video-file]");
         System.out.println();
@@ -123,6 +206,20 @@ public class CommandLineController {
         System.out.println("  -a, --audio        Play audio");
         System.out.println("  -x, --maximise     Open the player maximised");
         System.out.println("  -1, --monitor-1    Open the player on display 1");
-        System.out.println("  -2, --monitor-2    Open the player on display 2");
+        System.out.println("  -2, --monitor-2    Open the player on display 2\n");
+        
+        // Specification 1, extended help
+        System.out.println("Frame processors:");
+        System.out.println("  -n, --number-frames    Render the frame number onto each frame");
+        System.out.println("  -s, --scratch-frames   Render vertical film scratches");
+        System.out.println("  -f, --flicker-frames   Randomly dim frames");
+        System.out.println("  -w, --black-and-white  Convert frames to black and white");
+        System.out.println("  -y, --yellow-frames    Apply a warmer colour temperature");
+        System.out.println("  -v, --vignette-frames  Darken the frame edges");
+        System.out.println("  -d, --dust-frames      Render dust and hair marks");
+        System.out.println("  -j, --jitter-frames    Randomly displace frames by a few pixels");
+        System.out.println("  -m, --mottle-frames    Add cloudy emulsion mottling");
+        System.out.println("  -b, --bleed-frames     Bleed light into frames");
+        System.out.println("  -p, --pepper-frames    Pepper frames with dark spots/blotches");
     }
 }

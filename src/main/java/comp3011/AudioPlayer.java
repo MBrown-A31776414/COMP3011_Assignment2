@@ -39,6 +39,7 @@ public class AudioPlayer implements AutoCloseable {
     private SourceDataLine line; // Java Sound's audio-output interface - for us a destination, not a source.
     private byte[] outputBuffer = new byte[0];
 
+    
     public void open(int sampleRate, int channels) throws LineUnavailableException {
         if (sampleRate <= 0 || channels <= 0) {
             return;
@@ -51,6 +52,7 @@ public class AudioPlayer implements AutoCloseable {
         warmUpLine();
     }
 
+    
     public byte[] copySamples(Frame frame) {
         if (frame.samples == null || frame.samples.length == 0) {
             return new byte[0];

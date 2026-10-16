@@ -139,12 +139,15 @@ public class VideoPlayerApp extends Application {
 
     // Entry point.
     public static void main(String[] args) {
+    	
+    	//  command line controller to manage program functions.
         commandLineController = new CommandLineController(args);
-
+        
         if (!commandLineController.shouldLaunchApplication()) {
+        	
             System.exit(commandLineController.getExitCode());
         }
-
+        //launch the video player based on the arguments 
         launch(args);
     }
 }
