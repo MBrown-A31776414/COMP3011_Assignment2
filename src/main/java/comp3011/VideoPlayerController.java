@@ -31,9 +31,7 @@ public class VideoPlayerController {
     private final VideoPlayerView view;
     private final BiConsumer<Integer, Integer> videoSizeChangedHandler;
 
-    public VideoPlayerController(
-            boolean audioEnabled,
-            BiConsumer<Integer, Integer> videoSizeChangedHandler) {
+    public VideoPlayerController(boolean audioEnabled, BiConsumer<Integer, Integer> videoSizeChangedHandler) {
         this.view = new VideoPlayerView();
         this.videoSizeChangedHandler = videoSizeChangedHandler;
         model = new VideoPlayerModel(

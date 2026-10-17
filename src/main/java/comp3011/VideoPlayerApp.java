@@ -31,22 +31,37 @@ import javafx.stage.Stage;
  * </p>
  */
 public class VideoPlayerApp extends Application {
+	
+	// controller for input arguments, output video location and settings
     private static CommandLineController commandLineController;
-
+    // controller for the 
     private VideoPlayerController controller;
+    // top level container for javaFX applications
     private Stage stage;
     private Rectangle2D selectedScreenBounds;
     private int videoWidth;
     private int videoHeight;
 
+    /**
+     * The main entry point for all JavaFX applications.
+     * The start method is called after the init method has returned, and after the system is ready for the application to begin running.
+     * 
+     * @Overrides start in application
+     * 
+     * input; Stage, top level container, representing the application window
+     */
     @Override
     public void start(Stage stage) {
         this.stage = stage;
 
+        // initialize the VideoPlayer and set some of the settings based on the 
         controller = new VideoPlayerController(
                 commandLineController.isAudioRequested(),
                 this::setVideoSize);
-
+        /*
+        controller = new VideoPlayerController(
+         * */
+        // content to be displayed in the stage
         Scene scene = new Scene(controller.getView().getRoot());
         controller.installKeyboardShortcuts(scene);
 
@@ -54,6 +69,7 @@ public class VideoPlayerApp extends Application {
         stage.setScene(scene);
         moveToSelectedScreen(stage);
         stage.setMaximized(commandLineController.isMaximiseRequested());
+        // make window visible
         stage.show();
 
         stage.outputScaleXProperty().addListener((_, _, _) -> updateVideoSize());
@@ -147,7 +163,7 @@ public class VideoPlayerApp extends Application {
         	
             System.exit(commandLineController.getExitCode());
         }
-        //launch the video player based on the arguments 
+        //calls the start method of the application class, which is overrode above
         launch(args);
     }
 }
