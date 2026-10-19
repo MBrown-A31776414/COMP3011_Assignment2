@@ -51,6 +51,8 @@ public class VideoPlayerView {
     private final Pane tooltipLayer = new Pane();
     private final StackPane videoPane;
     private final StackPane root;
+    
+    // initializing the buttons
     private final Button startOverButton;
     private final Button backFiveButton;
     private final Button pausePlayButton;
@@ -58,6 +60,7 @@ public class VideoPlayerView {
     private final Button stopButton;
     private final Button audioButton;
 
+    // Creation of the user interface for the video player
     public VideoPlayerView() {
         imageView.setPreserveRatio(true);
         imageView.setSmooth(false);

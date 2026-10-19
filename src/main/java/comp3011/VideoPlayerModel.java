@@ -13,6 +13,7 @@ package comp3011;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.BiConsumer;
@@ -89,7 +90,9 @@ public class VideoPlayerModel {
     private long pauseStartedNs;
     private long relativeSeekBaseUs = NO_SEEK_REQUEST;
 
+    // creation of the background processing of video file, where does this come in?
     public VideoPlayerModel(
+    		CommandLineController frameController,
             boolean audioEnabled,
             BiConsumer<Integer, Integer> videoSizeChangedHandler,
             Consumer<Image> frameReadyHandler,
@@ -102,20 +105,56 @@ public class VideoPlayerModel {
         this.statusChangedHandler = statusChangedHandler;
         this.playbackStateChangedHandler = playbackStateChangedHandler;
         this.audioOutputStateChangedHandler = audioOutputStateChangedHandler;
-        this.frameProcessors = new ArrayList<>();
         
-        frameProcessors.add(new FrameBleeder());
-        frameProcessors.add(new FrameScratcher());
-        frameProcessors.add(new FrameDuster());
-        frameProcessors.add(new FramePepperer());
-        frameProcessors.add(new FrameBlackAndWhiter());
-        frameProcessors.add(new FrameYellower());
-        frameProcessors.add(new FrameVignetter());
-        frameProcessors.add(new FrameFlickerer());
-        frameProcessors.add(new FrameJitterer());
-        frameProcessors.add(new FrameNumberer());
+        // system log for which frames are enabled
+        System.out.println("\nSystem message for frame settings");
+        System.out.println("Bleed frames      " + frameController.getBleedFrames());
+        System.out.println("Black and white   " + frameController.getBlackAndWhiteFrames());
+        System.out.println("Dust Frames       " + frameController.getDustFrames());
+        System.out.println("Flicker Frames    " + frameController.getFlickerFrames());
+        System.out.println("Jitter Frames     " + frameController.getJitterFrames());
+        System.out.println("Mottle Frames     " + frameController.getMottleFrames());
+        System.out.println("Pepper Frames     " + frameController.getPepperFrames());
+        System.out.println("Scratch Frames    " + frameController.getScratchFrames());
+        System.out.println("Yellow Frames     " + frameController.getYellowFrames());
+        System.out.println("Show frame number " + frameController.getNumberFrames());
+        System.out.println();
+        
+        // ArrayList of frame processors.
+        this.frameProcessors = Collections.synchronizedList(new ArrayList<>());
+        // check with commandLineController if
+        if(frameController.getBleedFrames()==true) {
+        	frameProcessors.add(new FrameBleeder());
+        }
+        if(frameController.getScratchFrames()==true) {
+        	frameProcessors.add(new FrameScratcher());
+        }
+        if(frameController.getDustFrames()==true) {
+        	frameProcessors.add(new FrameDuster());
+        }
+        if(frameController.getPepperFrames()==true) {
+        	frameProcessors.add(new FramePepperer());
+        }
+        if(frameController.getBlackAndWhiteFrames()==true) {
+        	frameProcessors.add(new FrameBlackAndWhiter());
+        }
+        if(frameController.getYellowFrames()==true) {
+        	frameProcessors.add(new FrameYellower());
+        }
+        if(frameController.getVignetteFrames()==true) {
+        	frameProcessors.add(new FrameVignetter());
+        }
+        if(frameController.getFlickerFrames()==true) {
+        	frameProcessors.add(new FrameFlickerer());
+        }
+        if(frameController.getJitterFrames()==true) {
+        	frameProcessors.add(new FrameJitterer());
+        }
+        if(frameController.getNumberFrames()==true) {
+        	frameProcessors.add(new FrameNumberer());
+        }
     }
-
+    
     public void play(File file) {
         videoFile = file;
         videoDurationUs = NO_SEEK_REQUEST;
@@ -288,6 +327,7 @@ public class VideoPlayerModel {
         pauseStartedNs = 0;
     }
 
+    // what if frames are prepared ahead of time?
     private void prepareNextFrame() {
         if (!playbackOpen || preparedFrame != null) {
             return;
@@ -553,9 +593,15 @@ public class VideoPlayerModel {
         return Math.max(0, durationUs - frameDurationUs);
     }
 
+    // 
     private void processFrame(Frame frame, InfoFrame info) throws Exception {
-        for (FrameProcessor processor : frameProcessors) {
-            processor.process(frame, info);
+    	for (FrameProcessor processor : frameProcessors) {
+        	Thread processFrameThread = new Thread(processor);
+        	processFrameThread.start();
+        	
+        	
+        	processor.process(frame, info);
+        	System.out.println("VideoPlayerModel 600; "+ processor);
         }
     }
 

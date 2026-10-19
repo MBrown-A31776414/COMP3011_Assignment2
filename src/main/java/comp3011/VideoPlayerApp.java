@@ -46,7 +46,7 @@ public class VideoPlayerApp extends Application {
      * The main entry point for all JavaFX applications.
      * The start method is called after the init method has returned, and after the system is ready for the application to begin running.
      * 
-     * @Overrides start in application
+     * @Overrides start in application, (JavaFX) 
      * 
      * input; Stage, top level container, representing the application window
      */
@@ -55,7 +55,7 @@ public class VideoPlayerApp extends Application {
         this.stage = stage;
 
         // initialize the VideoPlayer and set some of the settings based on the 
-        controller = new VideoPlayerController(
+        controller = new VideoPlayerController(commandLineController,
                 commandLineController.isAudioRequested(),
                 this::setVideoSize);
         /*
@@ -65,13 +65,15 @@ public class VideoPlayerApp extends Application {
         Scene scene = new Scene(controller.getView().getRoot());
         controller.installKeyboardShortcuts(scene);
 
+        // title, content and size for application window
         stage.setTitle("COMP3011 Video Player");
         stage.setScene(scene);
         moveToSelectedScreen(stage);
         stage.setMaximized(commandLineController.isMaximiseRequested());
-        // make window visible
+        // show the application stage window visible
         stage.show();
 
+        //size and on close listener for the application window
         stage.outputScaleXProperty().addListener((_, _, _) -> updateVideoSize());
         stage.outputScaleYProperty().addListener((_, _, _) -> updateVideoSize());
         stage.setOnCloseRequest(_ -> controller.shutdown());
@@ -153,7 +155,7 @@ public class VideoPlayerApp extends Application {
         }
     }
 
-    // Entry point.
+    // Second entry point.
     public static void main(String[] args) {
     	
     	//  command line controller to manage program functions.

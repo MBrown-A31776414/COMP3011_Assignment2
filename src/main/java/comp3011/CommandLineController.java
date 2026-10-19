@@ -144,7 +144,8 @@ public class CommandLineController {
                 setDisplayId(1);
             } else if ("-2".equals(arg) || "--monitor-2".equals(arg)) {
                 setDisplayId(2);
-            // specification 1 arguments, should they be implemented or not
+                
+            // specification 1 arguments, if argument in terminal set true
             } else if ("-n".equals(arg) || "--number-frames".equals(arg)) {
                 numberFrames = true;
             } else if ("-s".equals(arg) || "--scratch-frames".equals(arg)) {
@@ -156,17 +157,17 @@ public class CommandLineController {
             } else if ("-y".equals(arg) || "--yellow-frames".equals(arg)) {
             	yellowFrames = true;
             } else if ("-v".equals(arg) || "--vignette-frames".equals(arg)) {
-            	yellowFrames = true;
+            	vignetteFrames = true;
             } else if ("-d".equals(arg) || "--dust-frames".equals(arg)) {
-            	yellowFrames = true;
+            	dustFrames = true;
             } else if ("-j".equals(arg) || "--jitter-frames".equals(arg)) {
-            	yellowFrames = true;
+            	jitterFrames = true;
             } else if ("-m".equals(arg) || "--mottle-frames".equals(arg)) {
-            	yellowFrames = true;
+            	mottleFrames = true;
             } else if ("-b".equals(arg) || "--bleed-frames".equals(arg)) {
-            	yellowFrames = true;
+            	bleedFrames = true;
             } else if ("-p".equals(arg) || "--pepper-frames".equals(arg)) {
-            	yellowFrames = true;
+            	pepperFrames = true;
             } else if (arg.startsWith("-")) {
                 errorMessage = "Unknown option: " + arg;
             } else {

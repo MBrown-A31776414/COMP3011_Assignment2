@@ -29,7 +29,7 @@ import org.bytedeco.javacv.Frame;
  * for this.
  * </p>
  */
-public abstract class FrameProcessor {
+public abstract class FrameProcessor implements Runnable {
     protected InfoVideo videoInfo;
 
     public FrameProcessor() {
@@ -55,4 +55,8 @@ public abstract class FrameProcessor {
     }
 
     public abstract void process(Frame frame, InfoFrame info) throws Exception;
+    
+    public void run() {
+    	System.out.println("a thread should be running");
+    }
 }
