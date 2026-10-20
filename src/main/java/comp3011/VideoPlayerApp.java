@@ -81,6 +81,7 @@ public class VideoPlayerApp extends Application {
         playVideo();
     }
 
+    
     private void moveToSelectedScreen(Stage stage) {
         List<Screen> screens = Screen.getScreens();
         Integer displayId = commandLineController.getDisplayId();

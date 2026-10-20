@@ -93,6 +93,7 @@ public class VideoPlayerModel {
     // creation of the background processing of video file, where does this come in?
     public VideoPlayerModel(
     		CommandLineController frameController,
+    		
             boolean audioEnabled,
             BiConsumer<Integer, Integer> videoSizeChangedHandler,
             Consumer<Image> frameReadyHandler,
@@ -116,6 +117,7 @@ public class VideoPlayerModel {
         System.out.println("Mottle Frames     " + frameController.getMottleFrames());
         System.out.println("Pepper Frames     " + frameController.getPepperFrames());
         System.out.println("Scratch Frames    " + frameController.getScratchFrames());
+        System.out.println("Vignette frames   " + frameController.getVignetteFrames());
         System.out.println("Yellow Frames     " + frameController.getYellowFrames());
         System.out.println("Show frame number " + frameController.getNumberFrames());
         System.out.println();

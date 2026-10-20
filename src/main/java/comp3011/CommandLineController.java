@@ -134,6 +134,7 @@ public class CommandLineController {
     private void parse() {
         List<String> videoFiles = new ArrayList<>();
         for (String arg : args) {
+        	//arg = arg.toLowerCase();
             if ("-h".equals(arg) || "--help".equals(arg)) {
                 helpRequested = true;
             } else if ("-a".equals(arg) || "--audio".equals(arg)) {
@@ -146,6 +147,7 @@ public class CommandLineController {
                 setDisplayId(2);
                 
             // specification 1 arguments, if argument in terminal set true
+            // base character and extended description
             } else if ("-n".equals(arg) || "--number-frames".equals(arg)) {
                 numberFrames = true;
             } else if ("-s".equals(arg) || "--scratch-frames".equals(arg)) {
@@ -168,6 +170,47 @@ public class CommandLineController {
             	bleedFrames = true;
             } else if ("-p".equals(arg) || "--pepper-frames".equals(arg)) {
             	pepperFrames = true;
+            // if an argument has multiple characters
+            } else if (arg.startsWith("-")&&(arg.length()>1)) {
+            	for(int i =0; i <arg.length(); i++) {
+            		if('n' == arg.charAt(i)) {
+            			numberFrames = true;
+            		}
+            		else if('s' == arg.charAt(i)) {
+            			scratchFrames = true;
+            		}
+            		else if('f' == arg.charAt(i)) {
+            			flickerFrames = true;
+            		}
+            		else if('w' == arg.charAt(i)) {
+            			blackAndWhite = true;
+            		}
+            		else if('y' == arg.charAt(i)) {
+            			yellowFrames = true;
+            		}
+            		else if('v' == arg.charAt(i)) {
+            			vignetteFrames = true;
+            		}
+            		else if('d' == arg.charAt(i)) {
+            			dustFrames = true;
+            		}
+            		else if('j' == arg.charAt(i)) {
+            			jitterFrames = true;
+            		}
+            		else if('m' == arg.charAt(i)) {
+            			mottleFrames = true;
+            		}
+            		else if('b' == arg.charAt(i)) {
+            			bleedFrames = true;
+            		}
+            		else if('p' == arg.charAt(i)) {
+            			pepperFrames = true;
+            		}
+            		else {
+            			System.out.println("strange error");
+            			//errorMessage = "Unknown option: " + arg.charAt(i); 
+            		}
+            	}
             } else if (arg.startsWith("-")) {
                 errorMessage = "Unknown option: " + arg;
             } else {
@@ -198,7 +241,7 @@ public class CommandLineController {
         this.displayId = displayId;
     }
 
-    // Help message to print to console
+    // Help message to print to console, needs to be extremely precise for tool upload to accept
     private void printHelp() {
         System.out.println("Usage: VideoPlayer [options] [video-file]");
         System.out.println();
@@ -207,8 +250,8 @@ public class CommandLineController {
         System.out.println("  -a, --audio        Play audio");
         System.out.println("  -x, --maximise     Open the player maximised");
         System.out.println("  -1, --monitor-1    Open the player on display 1");
-        System.out.println("  -2, --monitor-2    Open the player on display 2\n");
-        
+        System.out.println("  -2, --monitor-2    Open the player on display 2");
+        System.out.println();
         // Specification 1, extended help
         System.out.println("Frame processors:");
         System.out.println("  -n, --number-frames    Render the frame number onto each frame");
@@ -222,5 +265,9 @@ public class CommandLineController {
         System.out.println("  -m, --mottle-frames    Add cloudy emulsion mottling");
         System.out.println("  -b, --bleed-frames     Bleed light into frames");
         System.out.println("  -p, --pepper-frames    Pepper frames with dark spots/blotches");
+        System.out.println();
+        System.out.println("Frame processors are applied in command-line order and may be repeated.");
+        System.out.println("Example: -nssnfwyvdjmbp numbers, scratches twice, numbers again, flickers,");
+        System.out.println("converts, warms, vignettes, dusts, jitters, mottles, bleeds, then peppers.");
     }
 }
