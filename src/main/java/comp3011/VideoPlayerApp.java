@@ -163,10 +163,10 @@ public class VideoPlayerApp extends Application {
         commandLineController = new CommandLineController(args);
         
         if (!commandLineController.shouldLaunchApplication()) {
-        	
-            System.exit(commandLineController.getExitCode());
+        	//System.exit(0);
+        	System.exit(commandLineController.getExitCode());
         }
-        //calls the start method of the application class, which is overrode above
+        //calls the start method of the application class
         launch(args);
     }
 }
