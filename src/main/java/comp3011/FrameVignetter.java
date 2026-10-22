@@ -146,4 +146,16 @@ public class FrameVignetter extends FrameProcessor {
     private double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(value, max));
     }
+    
+	@Override
+	public void run() {
+		try {
+			initialise(null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }

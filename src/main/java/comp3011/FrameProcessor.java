@@ -56,7 +56,4 @@ public abstract class FrameProcessor implements Runnable {
 
     public abstract void process(Frame frame, InfoFrame info) throws Exception;
     
-    public void run() {
-    	System.out.println("a thread should be running");
-    }
 }

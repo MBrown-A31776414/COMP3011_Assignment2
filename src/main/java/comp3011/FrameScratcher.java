@@ -178,4 +178,8 @@ public class FrameScratcher extends FrameProcessor {
             int xEnd,
             boolean thick) {
     }
+    
+    public void run() {
+    	System.out.println(this +" thread is be running");
+    }
 }

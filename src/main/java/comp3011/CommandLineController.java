@@ -38,24 +38,13 @@ public class CommandLineController {
     private File videoFile;
     private String errorMessage;
     
-    // Specification 1 setting on or off
-    private boolean numberFrames;
-    private boolean scratchFrames;
-    private boolean flickerFrames;
-    private boolean blackAndWhite;
-    private boolean yellowFrames;
-    private boolean vignetteFrames;
-    private boolean dustFrames;
-    private boolean jitterFrames;
-    private boolean mottleFrames;
-    private boolean bleedFrames;
-    private boolean pepperFrames;
+    // Specification 1 setting on or off  
+    private List<FrameProcessor> Frames;
     
     // On creation parse the argument or 
     public CommandLineController(String[] args) {
     	// Clone input arguments to class variable and parse the arguments
         this.args = args.clone();
-        System.out.println();
         parse();
         if (errorMessage != null) {
             System.out.println(errorMessage);
@@ -97,44 +86,14 @@ public class CommandLineController {
     /**
      * Specification 1; frame processors
      */
-    public boolean getNumberFrames() {
-    	return numberFrames;
-    }
-    public boolean getScratchFrames() {
-    	return scratchFrames;
-    }
-    public boolean getFlickerFrames() {
-    	return flickerFrames;
-    }
-    public boolean getBlackAndWhiteFrames() {
-    	return blackAndWhite;
-    }
-    public boolean getYellowFrames() {
-    	return yellowFrames;
-    }
-    public boolean getVignetteFrames() {
-    	return vignetteFrames;
-    }
-    public boolean getDustFrames() {
-    	return dustFrames;
-    }
-    public boolean getJitterFrames() {
-    	return jitterFrames;
-    }
-    public boolean getMottleFrames() {
-    	return mottleFrames;
-    }
-    public boolean getBleedFrames() {
-    	return bleedFrames;
-    }
-    public boolean getPepperFrames() {
-    	return pepperFrames;
+    public List<FrameProcessor> getFrames() {
+    	return Frames;
     }
 
     private void parse() {
         List<String> videoFiles = new ArrayList<>();
+        Frames = new ArrayList<>();
         for (String arg : args) {
-        	//String terminalarg = arg.toLowerCase(); // not sure if implementing case sensitive command is worth it
             if ("-h".equals(arg) || "--help".equals(arg)) {
                 helpRequested = true;
             } else if ("-a".equals(arg) || "--audio".equals(arg)) {
@@ -147,71 +106,74 @@ public class CommandLineController {
                 setDisplayId(2);
                 
             // specification 1 arguments, if argument in terminal set true
-            // base character and extended description
-            } else if ("-n".equals(arg) || "--number-frames".equals(arg)) {
-                numberFrames = true;
-            } else if ("-s".equals(arg) || "--scratch-frames".equals(arg)) {
-                scratchFrames = true;
-            } else if ("-f".equals(arg) || "--flicker-frame".equals(arg)) {
-                flickerFrames = true;
-            } else if ("-w".equals(arg) || "--black-and-white".equals(arg)) {
-                blackAndWhite = true;
-            } else if ("-y".equals(arg) || "--yellow-frames".equals(arg)) {
-            	yellowFrames = true;
-            } else if ("-v".equals(arg) || "--vignette-frames".equals(arg)) {
-            	vignetteFrames = true;
-            } else if ("-d".equals(arg) || "--dust-frames".equals(arg)) {
-            	dustFrames = true;
-            } else if ("-j".equals(arg) || "--jitter-frames".equals(arg)) {
-            	jitterFrames = true;
-            } else if ("-m".equals(arg) || "--mottle-frames".equals(arg)) {
-            	mottleFrames = true;
-            } else if ("-b".equals(arg) || "--bleed-frames".equals(arg)) {
-            	bleedFrames = true;
-            } else if ("-p".equals(arg) || "--pepper-frames".equals(arg)) {
-            	pepperFrames = true;
-            // if an argument has multiple characters
+            // extended description, handles illegal arguments with --
+            } else if (arg.startsWith("--")) {
+            	if ("--number-frames".equals(arg)) {
+            		Frames.add(new FrameNumberer());
+            	} else if ("--scratch-frames".equals(arg)) {
+            		Frames.add(new FrameScratcher());
+            	} else if ("--flicker-frames".equals(arg)) {
+            		Frames.add(new FrameFlickerer());
+            	} else if ("--black-and-white".equals(arg)) {
+            		Frames.add(new FrameBlackAndWhiter());
+            	} else if ("--yellow-frames".equals(arg)) {
+            		Frames.add(new FrameYellower());
+            	} else if ("--vignette-frames".equals(arg)) {
+            		Frames.add(new FrameVignetter());
+            	} else if ("--dust-frames".equals(arg)) {
+            		Frames.add(new FrameDuster());
+            	} else if ("--jitter-frames".equals(arg)) {
+            		Frames.add(new FrameJitterer());
+            	} else if ("--mottle-frames".equals(arg)) {
+            		Frames.add(new FrameMottler());
+            	} else if ("--bleed-frames".equals(arg)) {
+            		Frames.add(new FrameBleeder());
+            	} else if ("--pepper-frames".equals(arg)) {
+            		Frames.add(new FramePepperer());
+            		System.out.println("do the initialize imeduiatly");
+            	} else {
+        			errorMessage = "Unknown option: " + arg; 
+        		}	
+            // for abbreviated arguments has multiple characters
             } else if (arg.startsWith("-")&&(arg.length()>1)) {
-            	for(int i =0; i <arg.length(); i++) {
+            	for(int i =1; i <arg.length(); i++) {
             		if('n' == arg.charAt(i)) {
-            			numberFrames = true;
+            			Frames.add(new FrameNumberer());
             		}
-            		else if('s' == arg.charAt(i)) {
-            			scratchFrames = true;
+            		else if('s' == arg.charAt(i) || 'S' == arg.charAt(i)) {
+            			Frames.add(new FrameScratcher());
             		}
-            		else if('f' == arg.charAt(i)) {
-            			flickerFrames = true;
+            		else if('f' == arg.charAt(i) || 'F' == arg.charAt(i)) {
+            			Frames.add(new FrameFlickerer());
             		}
-            		else if('w' == arg.charAt(i)) {
-            			blackAndWhite = true;
+            		else if('w' == arg.charAt(i)  || 'W' == arg.charAt(i)) {
+            			Frames.add(new FrameBlackAndWhiter());
             		}
-            		else if('y' == arg.charAt(i)) {
-            			yellowFrames = true;
+            		else if('y' == arg.charAt(i)  || 'Y' == arg.charAt(i)) {
+            			Frames.add(new FrameYellower());
             		}
-            		else if('v' == arg.charAt(i)) {
-            			vignetteFrames = true;
+            		else if('v' == arg.charAt(i) || 'V' == arg.charAt(i)) {
+            			Frames.add(new FrameVignetter());
             		}
-            		else if('d' == arg.charAt(i)) {
-            			dustFrames = true;
+            		else if('d' == arg.charAt(i) || 'D' == arg.charAt(i)) {
+            			Frames.add(new FrameDuster());
             		}
-            		else if('j' == arg.charAt(i)) {
-            			jitterFrames = true;
+            		else if('j' == arg.charAt(i) || 'J' == arg.charAt(i)) {
+            			Frames.add(new FrameJitterer());
             		}	
-            		else if('m' == arg.charAt(i)) {
-            			mottleFrames = true;
+            		else if('m' == arg.charAt(i) || 'M' == arg.charAt(i)) {
+            			Frames.add(new FrameMottler());
             		}
-            		else if('b' == arg.charAt(i)) {
-            			bleedFrames = true;
+            		else if('b' == arg.charAt(i) || 'B' == arg.charAt(i)) {
+            			Frames.add(new FrameBleeder());
             		}
-            		else if('p' == arg.charAt(i)) {
-            			pepperFrames = true;
+            		else if('p' == arg.charAt(i) || 'P' == arg.charAt(i)) {
+            			Frames.add(new FramePepperer());
             		}
             		else {
-            			errorMessage = "Unknown option: " + arg; 
+            			errorMessage = "Unknown option: " + arg.charAt(i); 
             		}
             	}
-            } else if (arg.startsWith("-")) {
-                errorMessage = "Unknown option: " + arg;
             } else {
                 videoFiles.add(arg);
             }
@@ -219,13 +181,15 @@ public class CommandLineController {
 
         if (videoFiles.size() > 1) {
             errorMessage = "Usage: VideoPlayer [options] [video-file]";
-        } else if (videoFiles.size() == 1) {
+        }
+        else if (videoFiles.size() == 1) {
             videoFile = new File(videoFiles.get(0));
             if (!videoFile.isFile()) {
                 errorMessage = "File not found: " + videoFile.getPath();
                 videoFile = null;
-            }
-        } else {
+            }  
+        }
+        else {
             if (!helpRequested) {
                 errorMessage = "No video file specified.";
             }

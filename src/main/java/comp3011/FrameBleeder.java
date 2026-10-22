@@ -255,4 +255,16 @@ public class FrameBleeder extends FrameProcessor {
     private double lerp(double a, double b, double blend) {
         return a + (b - a) * blend;
     }
+    
+	@Override
+	public void run() {
+		try {
+			initialise(null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }

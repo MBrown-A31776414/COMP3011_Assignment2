@@ -148,4 +148,16 @@ public class FrameNumberer extends FrameProcessor {
             pixels.put(base + channel, byteValue);
         }
     }
+    
+	@Override
+	public void run() {
+		try {
+			initialise(null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }

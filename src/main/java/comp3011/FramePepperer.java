@@ -53,6 +53,7 @@ public class FramePepperer extends FrameProcessor {
 
     @Override
     public void initialise(InfoVideo videoInfo) throws Exception {
+    	System.out.println("imediate initialize");
         super.initialise(videoInfo);
         mediaSeed = saltedMediaSeed(videoInfo.mediaName(), instanceIndex + SEED_SALT);
     }
@@ -254,4 +255,16 @@ public class FramePepperer extends FrameProcessor {
             return Math.max(0.35, scale);
         }
     }
+    
+	@Override
+	public void run() {
+		try {
+			initialise(null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }

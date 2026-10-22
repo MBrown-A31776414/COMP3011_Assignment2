@@ -105,56 +105,13 @@ public class VideoPlayerModel {
         this.frameReadyHandler = frameReadyHandler;
         this.statusChangedHandler = statusChangedHandler;
         this.playbackStateChangedHandler = playbackStateChangedHandler;
-        this.audioOutputStateChangedHandler = audioOutputStateChangedHandler;
+        this.audioOutputStateChangedHandler = audioOutputStateChangedHandler;        
+        // ArrayList of frame processors from the commandline controller
+        this.frameProcessors = frameController.getFrames();
+        for (FrameProcessor frame: frameProcessors) {
+        	 System.out.println("frame hash code"+frame.hashCode());
+        }
         
-        // system log for which frames are enabled
-        System.out.println("\nSystem message for frame settings");
-        System.out.println("Bleed frames      " + frameController.getBleedFrames());
-        System.out.println("Black and white   " + frameController.getBlackAndWhiteFrames());
-        System.out.println("Dust Frames       " + frameController.getDustFrames());
-        System.out.println("Flicker Frames    " + frameController.getFlickerFrames());
-        System.out.println("Jitter Frames     " + frameController.getJitterFrames());
-        System.out.println("Mottle Frames     " + frameController.getMottleFrames());
-        System.out.println("Pepper Frames     " + frameController.getPepperFrames());
-        System.out.println("Scratch Frames    " + frameController.getScratchFrames());
-        System.out.println("Vignette frames   " + frameController.getVignetteFrames());
-        System.out.println("Yellow Frames     " + frameController.getYellowFrames());
-        System.out.println("Show frame number " + frameController.getNumberFrames());
-        System.out.println();
-        
-        // ArrayList of frame processors.
-        this.frameProcessors = Collections.synchronizedList(new ArrayList<>());
-        // check with commandLineController if
-        if(frameController.getBleedFrames()==true) {
-        	frameProcessors.add(new FrameBleeder());
-        }
-        if(frameController.getScratchFrames()==true) {
-        	frameProcessors.add(new FrameScratcher());
-        }
-        if(frameController.getDustFrames()==true) {
-        	frameProcessors.add(new FrameDuster());
-        }
-        if(frameController.getPepperFrames()==true) {
-        	frameProcessors.add(new FramePepperer());
-        }
-        if(frameController.getBlackAndWhiteFrames()==true) {
-        	frameProcessors.add(new FrameBlackAndWhiter());
-        }
-        if(frameController.getYellowFrames()==true) {
-        	frameProcessors.add(new FrameYellower());
-        }
-        if(frameController.getVignetteFrames()==true) {
-        	frameProcessors.add(new FrameVignetter());
-        }
-        if(frameController.getFlickerFrames()==true) {
-        	frameProcessors.add(new FrameFlickerer());
-        }
-        if(frameController.getJitterFrames()==true) {
-        	frameProcessors.add(new FrameJitterer());
-        }
-        if(frameController.getNumberFrames()==true) {
-        	frameProcessors.add(new FrameNumberer());
-        }
     }
     
     public void play(File file) {
@@ -598,12 +555,7 @@ public class VideoPlayerModel {
     // 
     private void processFrame(Frame frame, InfoFrame info) throws Exception {
     	for (FrameProcessor processor : frameProcessors) {
-        	Thread processFrameThread = new Thread(processor);
-        	processFrameThread.start();
-        	
-        	
         	processor.process(frame, info);
-        	System.out.println("VideoPlayerModel 600; "+ processor);
         }
     }
 
