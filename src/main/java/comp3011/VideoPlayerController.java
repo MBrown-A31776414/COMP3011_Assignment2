@@ -13,6 +13,7 @@ package comp3011;
 import java.io.File;
 import java.util.function.BiConsumer;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -31,11 +32,12 @@ public class VideoPlayerController {
     private final VideoPlayerView view;
     private final BiConsumer<Integer, Integer> videoSizeChangedHandler;
 
-    public VideoPlayerController(CommandLineController frameController, boolean audioEnabled, BiConsumer<Integer, Integer> videoSizeChangedHandler) {
+    public VideoPlayerController(
+            boolean audioEnabled,
+            BiConsumer<Integer, Integer> videoSizeChangedHandler) {
         this.view = new VideoPlayerView();
         this.videoSizeChangedHandler = videoSizeChangedHandler;
         model = new VideoPlayerModel(
-        		frameController,
                 audioEnabled,
                 this::onVideoSizeChanged,
                 this::onFrameReady,
@@ -68,7 +70,6 @@ public class VideoPlayerController {
                 event.consume();
             } else if (event.getCode() == KeyCode.HOME) {
                 startOver();
-                event.consume();
             } else if (event.getCode() == KeyCode.A) {
                 toggleAudioOutput();
                 event.consume();
@@ -112,6 +113,7 @@ public class VideoPlayerController {
     private void stopAndExit() {
         model.stopPlayback();
         javafx.application.Platform.exit();
+    	System.exit(0);
     }
 
     private void onVideoSizeChanged(int width, int height) {

@@ -72,16 +72,4 @@ public class FrameBlackAndWhiter extends FrameProcessor {
             }
         }
     }
-    
-	@Override
-	public void run() {
-		try {
-			initialise(null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -39,6 +39,9 @@ public class FrameNumberer extends FrameProcessor {
     private static final int LOWER_LEFT = 16;
     private static final int LOWER_RIGHT = 32;
     private static final int BOTTOM = 64;
+    
+    // lets see what this does
+    public int frameNumber;
 
     // 7-segment display rendering rules for each decimal digit:
     private static final int[] DIGIT_SEGMENTS = {
@@ -74,8 +77,10 @@ public class FrameNumberer extends FrameProcessor {
         if (videoInfo.imageChannels() < 1) {
             throw new Exception("FrameNumberer requires at least one image channel");
         }
-
-        String text = Integer.toString(Math.max(0, info.frameNumber()));
+        //set frameNumber
+        frameNumber = Math.max(0, info.frameNumber());
+        // assign frameNumber to string, get on with frame as normal
+        String text = Integer.toString(frameNumber);
         int textWidth = text.length() * TILE_WIDTH + (text.length() - 1) * TILE_SPACING;
         int textHeight = TILE_HEIGHT;
 
@@ -148,16 +153,4 @@ public class FrameNumberer extends FrameProcessor {
             pixels.put(base + channel, byteValue);
         }
     }
-    
-	@Override
-	public void run() {
-		try {
-			initialise(null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// TODO Auto-generated method stub
-		
-	}
 }

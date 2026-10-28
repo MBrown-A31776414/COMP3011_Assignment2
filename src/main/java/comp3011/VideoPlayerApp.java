@@ -54,13 +54,10 @@ public class VideoPlayerApp extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        // initialize the VideoPlayer and set some of the settings based on the 
-        controller = new VideoPlayerController(commandLineController,
+        // create the VideoPlayerController and set audio and size based on stage. 
+        controller = new VideoPlayerController(
                 commandLineController.isAudioRequested(),
                 this::setVideoSize);
-        /*
-        controller = new VideoPlayerController(
-         * */
         // content to be displayed in the stage
         Scene scene = new Scene(controller.getView().getRoot());
         controller.installKeyboardShortcuts(scene);

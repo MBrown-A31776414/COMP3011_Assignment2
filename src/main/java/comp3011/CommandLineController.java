@@ -32,14 +32,12 @@ public class CommandLineController {
     private boolean helpRequested;
     private boolean audioRequested;
     private boolean maximiseRequested;
-    
-    // details of the
     private Integer displayId;
     private File videoFile;
     private String errorMessage;
     
-    // Specification 1 setting on or off  
-    private List<FrameProcessor> Frames;
+    // list of frame objects that are being used for the   
+    static private List<FrameProcessor> Frames;
     
     // On creation parse the argument or 
     public CommandLineController(String[] args) {
@@ -54,7 +52,6 @@ public class CommandLineController {
         }
     }
 
-    // 
     public File getVideoFile() {
         return videoFile;
     }
@@ -83,13 +80,12 @@ public class CommandLineController {
         return errorMessage == null && videoFile != null;
     }
     
-    /**
-     * Specification 1; frame processors
-     */
-    public List<FrameProcessor> getFrames() {
+    // get the list of frame objects. The array will be filled in parse()
+    public static List<FrameProcessor> getFrames() {
     	return Frames;
     }
 
+    // parsing the arguments 
     private void parse() {
         List<String> videoFiles = new ArrayList<>();
         Frames = new ArrayList<>();
@@ -105,7 +101,7 @@ public class CommandLineController {
             } else if ("-2".equals(arg) || "--monitor-2".equals(arg)) {
                 setDisplayId(2);
                 
-            // specification 1 arguments, if argument in terminal set true
+            // specification 1 full arguments, if argument in terminal set true
             // extended description, handles illegal arguments with --
             } else if (arg.startsWith("--")) {
             	if ("--number-frames".equals(arg)) {
@@ -130,11 +126,10 @@ public class CommandLineController {
             		Frames.add(new FrameBleeder());
             	} else if ("--pepper-frames".equals(arg)) {
             		Frames.add(new FramePepperer());
-            		System.out.println("do the initialize imeduiatly");
             	} else {
         			errorMessage = "Unknown option: " + arg; 
         		}	
-            // for abbreviated arguments has multiple characters
+            // for abbreviated arguments, or arguments with has multiple characters
             } else if (arg.startsWith("-")&&(arg.length()>1)) {
             	for(int i =1; i <arg.length(); i++) {
             		if('n' == arg.charAt(i)) {
@@ -196,6 +191,7 @@ public class CommandLineController {
         }
     }
 
+    
     private void setDisplayId(int displayId) {
         if (this.displayId != null && this.displayId != displayId) {
             errorMessage = "Only one display option can be used";

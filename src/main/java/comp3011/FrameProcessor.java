@@ -29,7 +29,7 @@ import org.bytedeco.javacv.Frame;
  * for this.
  * </p>
  */
-public abstract class FrameProcessor implements Runnable {
+public abstract class FrameProcessor{
     protected InfoVideo videoInfo;
 
     public FrameProcessor() {
