@@ -4,7 +4,7 @@
  * 
  * Authors:
  *   1. Simon Ratcliffe, in collaboration with GPT-5.6 Terra
- *   2. <student name and student number insert here upon modification>
+ *   2. Mitchell Brown A3177614
  *
  * Copyright 2026 Simon Ratcliffe
  */
@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -114,11 +113,11 @@ public class VideoPlayerModel {
         this.statusChangedHandler = statusChangedHandler;
         this.playbackStateChangedHandler = playbackStateChangedHandler;
         this.audioOutputStateChangedHandler = audioOutputStateChangedHandler;
-        // que of frames ready to 
+        // Queue of frames ready to display 
         this.frameQueue= new ConcurrentLinkedQueue<>();
         // ArrayList of frame processors from the commandline controller
         this.frameProcessors = CommandLineController.getFrames();
-        // a way to track the frame number of
+        // pool of threads to process the frames
         this.executor = Executors.newFixedThreadPool(3);
 
     }	
@@ -178,15 +177,19 @@ public class VideoPlayerModel {
     }
 
     public void stopPlayback() {
+    	// interrupt the frameBuffer thread
     	if(frameBuffer != null) {
     		frameBuffer.interrupt();
     	}
+    	// make sure the frameQueue is empty
     	while(!frameQueue.isEmpty()) {
     		frameQueue.poll().cancel(true);
     	}
+    	// make sure the executors are shutting down
     	executor.shutdownNow();
     	shutdownAndAwaitTermination(executor);
     	
+    	// close other system resources
         closePlaybackResources();
         currentTimestampUs = 0;
         pauseRequested = false;
@@ -195,6 +198,7 @@ public class VideoPlayerModel {
         notifyPlaybackStateChanged();
     }
 
+    // shutdown fuction for the executorService
 	void shutdownAndAwaitTermination(ExecutorService pool) {
 		pool.shutdown(); // Disable new tasks from being submitted
 		try {
@@ -249,7 +253,6 @@ public class VideoPlayerModel {
         }
     }
 
-    // 
     private void startPlayback(long startTimestampUs, boolean initiallyPaused, long initialRelativeSeekBaseUs) {
         closePlaybackResources();
 
@@ -265,10 +268,11 @@ public class VideoPlayerModel {
             openPlaybackResources(startTimestampUs);
             resetPlaybackClock(currentTimestampUs);
             
-            // start frameBuffer
+            // start a thread to prepare frames ahead of time building up a frameBuffer
             frameBuffer = new Thread(() -> getFrames());
             frameBuffer.start();
 
+            // opening application resources
             playbackOpen = true;
             playbackTimer.start();
             prepareNextFrame();
@@ -336,10 +340,13 @@ public class VideoPlayerModel {
             return;
         }
         try {
+        	// take the top PreparedFrame from the frameQueue 
         	Future<PreparedFrame> temp = frameQueue.poll();
+        	// make sure it's not null in several instances
         	if(temp == null) {
         		preparedFrame = null;
         	} else {
+        		// get the PreparedFrame from the  
         		PreparedFrame temp1 = temp.get();
         		if(temp1 == null) {
             		preparedFrame = null;
@@ -356,12 +363,17 @@ public class VideoPlayerModel {
     private void getFrames() {
     	boolean isRunning = true;
 		while(isRunning) {
+			// generate a queue of about 10 seconds of buffering
 	        if(frameQueue.size() <240) {
 		    	try {
+		    		// prepare the nextFrame by reading the next video frame
 		    		Future<PreparedFrame> nextFrame = readNextVideoFrame();
+		    		// nextFrame isn't null add it to the list
 		    		if(nextFrame != null) {
+		    			// add the nextframe to the queue 
 		    			frameQueue.offer(nextFrame);
 		    		} else {
+		    			// if next frame in null stop looping
 		    			break;
 		    		}
 		    	}catch (Exception e) {
@@ -421,6 +433,7 @@ public class VideoPlayerModel {
                 frameProcessorsInitialised = true;
             }
 
+            // time stamping controls
             if (firstTimestampUs == NO_SEEK_REQUEST) {
                 firstTimestampUs = timestampUs;
                 playbackStartNs = System.nanoTime();
@@ -429,13 +442,17 @@ public class VideoPlayerModel {
                 }
             }
 
+            // initialisse the frameNumber and frame info
             int frameNumber = grabber.getFrameNumber();
             InfoFrame info = new InfoFrame(frameNumber, timestampUs);
             
+            // test access for the frameGenerator
             // frameGenerator();
             
+            // process the frame 
             processFrame(frame, info);
 
+            // Initialise several variables for the  
             Image image = converter.convert(frame);
             long relativeTimestampUs = Math.max(0, timestampUs - firstTimestampUs);
             long logicalTimestampUs = logicalPlaybackBaseUs + relativeTimestampUs;
@@ -446,6 +463,7 @@ public class VideoPlayerModel {
             };
             return executor.submit(task);
             */
+            /*
             return CompletableFuture.completedFuture(new PreparedFrame(
                     image,
                     frameNumber,
@@ -453,7 +471,7 @@ public class VideoPlayerModel {
                     logicalTimestampUs,
                     targetTimeNs,
                     System.nanoTime())
-            );/*
+            );*/
             		new PreparedFrame(
                     image,
                     frameNumber,
@@ -461,20 +479,20 @@ public class VideoPlayerModel {
                     logicalTimestampUs,
                     targetTimeNs,
                     System.nanoTime());
-            */
+            
         }
-
         return CompletableFuture.completedFuture(null);
     }
     
-    // 
+    // generate frames, attempting to allow split javafx functions allowing multithreading
 	private PreparedFrame frameGenerator(Frame frame, InfoFrame info, long timestampUs, int frameNumber) {
 
 		try {
-			System.out.println("Before " +frame.imageHeight+" "+frame.imageWidth);
+			// testing why some frames generate error relating to frame size
+			//System.out.println("Before " +frame.imageHeight+" "+frame.imageWidth);
 			
 			processFrame(frame, info);
-			System.out.println("After "+frame.imageHeight+" "+frame.imageWidth);
+			//System.out.println("After "+frame.imageHeight+" "+frame.imageWidth);
 			Image image = converter.convert(frame);
 			long relativeTimestampUs = Math.max(0, timestampUs - firstTimestampUs);
 			long logicalTimestampUs = logicalPlaybackBaseUs + relativeTimestampUs;
@@ -593,11 +611,6 @@ public class VideoPlayerModel {
     }
 
     private void finishPlayback() {
-    	/*
-    	while(!frameQueue.isEmpty()) {
-    		prepareNextFrame();
-    	}
-    	*/
     	long endTimestampUs = videoDurationUs != NO_SEEK_REQUEST
                 ? videoDurationUs
                 : currentTimestampUs;

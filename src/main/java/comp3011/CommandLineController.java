@@ -4,7 +4,7 @@
  * 
  * Authors:
  *   1. Simon Ratcliffe, in collaboration with GPT-5.6 Terra
- *   2. <student name and student number insert here upon modification>
+ *   2. Mitchell Brown A3177614
  *
  * Copyright 2026 Simon Ratcliffe
  */
@@ -36,17 +36,20 @@ public class CommandLineController {
     private File videoFile;
     private String errorMessage;
     
-    // list of frame objects that are being used for the   
+    // list of frameProcessors,  
     static private List<FrameProcessor> Frames;
     
     // On creation parse the argument or 
     public CommandLineController(String[] args) {
     	// Clone input arguments to class variable and parse the arguments
         this.args = args.clone();
+        // parse the input argument
         parse();
+        // based on parse results return errorMessage 
         if (errorMessage != null) {
             System.out.println(errorMessage);
         }
+        // output help if requested
         if (helpRequested) {
             printHelp();
         }
@@ -87,8 +90,11 @@ public class CommandLineController {
 
     // parsing the arguments 
     private void parse() {
+    	// initialise a list of video files for the parse
         List<String> videoFiles = new ArrayList<>();
+        // new arraylist for arguments to be added to
         Frames = new ArrayList<>();
+        // list of default arguments
         for (String arg : args) {
             if ("-h".equals(arg) || "--help".equals(arg)) {
                 helpRequested = true;
